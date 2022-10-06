@@ -1,11 +1,14 @@
-import express from "express";
+import express from 'express'
 import config from 'config'
+import connect from './utils/connect'
+import log from './utils/logger'
+import routes from './routes'
 
-const port = config.get<string>("port");
-const app = express();
+const port = config.get<number>('port')
+const app = express()
 
-app.listen(3000, () => {
-    console.log("Server is listening on port 3000");
-});
-
-  
+app.listen(port, async () => {
+  log.info(`app is running at ${port}`)
+  await connect()
+  routes(app)
+})
