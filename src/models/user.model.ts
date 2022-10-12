@@ -1,36 +1,55 @@
-import mongoose from 'mongoose'
+import mongoose, { Schema, model, Document } from 'mongoose'
 import bcrypt from 'bcrypt'
 import config from 'config'
-import { string } from 'zod'
 import { NextFunction } from 'express'
 
-//alert: can use typegoose or something here
-export interface UserDocument extends mongoose.Document {
+interface IUser extends Document {
   email: string
-  name: string
   password: string
-  createdAt: Date
-  updatedAt: Date
+  name: string
+  comparePassword: (candidatePassword: string) => Promise<boolean | Error>
 }
 
-const userSchema = new mongoose.Schema(
+const UserSchema = new Schema(
   {
-    email: { type: string, required: true, unique: true },
-    name: { type: String, required: true },
-    password: { type: String, required: true },
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+      lowercase: true,
+      trim: true,
+    },
+    password: {
+      type: String,
+      required: true,
+      minlength: 6,
+    },
+    name: {
+      type: String,
+      required: true,
+      minlength: 2,
+      maxlength: 40,
+    },
   },
   {
     timestamps: true,
   }
 )
 
-userSchema.pre('save', async function (next: NextFunction) {
-  let user = this as UserDocument
-  if (!user.isModified('paassword')) {
+UserSchema.pre('save' as any, async function (next): Promise<void> {
+  try {
+    const salt = await bcrypt.genSalt(config.get('saltWorkFactor'))
+    const hash = await bcrypt.hash(this.password, salt)
+    this.password = hash
     return next()
+  } catch (error: Error | any) {
+    return next(error)
   }
 })
 
-const UserModel = mongoose.model('User', userSchema)
+UserSchema.methods.comparePassword = async function (candidatePassword: string): Promise<boolean | Error> {
+  return bcrypt.compare(candidatePassword, this.password)
+}
+const UserModel = model<IUser>('User', UserSchema)
 
 export default UserModel
