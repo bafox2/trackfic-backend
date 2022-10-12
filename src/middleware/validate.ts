@@ -11,7 +11,7 @@ const validate = (schema: AnyZodObject) => (req: Request, res: Response, next: N
     })
   } catch (e) {
     if (e instanceof Error) {
-      return res.status(400).send(e.errors)
+      return res.status(400).send(e.message)
     } else {
       log.error('unknown error', e)
     }
