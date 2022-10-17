@@ -1,9 +1,8 @@
-import { DocumentDefinition } from 'mongoose'
-import UserModel, { UserDocument } from '../models/user.model'
+import UserModel, { IUserInput } from '../models/user.model'
 
-export async function createUser(input: DocumentDefinition<User>): Promise<any> {
+export async function createUser(input: IUserInput): Promise<any> {
   try {
-    return await User.create(input)
+    return await UserModel.create(input)
   } catch (error: Error | any) {
     throw new Error(error)
   }

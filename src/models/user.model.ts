@@ -3,10 +3,15 @@ import bcrypt from 'bcrypt'
 import config from 'config'
 import { NextFunction } from 'express'
 
-interface IUser extends Document {
+export interface IUserInput {
   email: string
   password: string
   name: string
+}
+
+export interface IUser extends IUserInput, Document {
+  createdAt: Date
+  updatedAt: Date
   comparePassword: (candidatePassword: string) => Promise<boolean | Error>
 }
 

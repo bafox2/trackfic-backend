@@ -12,10 +12,5 @@ async function connect() {
     process.exit(1)
   }
 }
-{
-  a: 2
-  a: {
-    b: 3
-  }
-}
+
 export default connect
