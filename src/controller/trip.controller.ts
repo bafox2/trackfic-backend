@@ -1,64 +1,64 @@
 import { Request, Response } from 'express'
-import { CreateRouteInput, UpdateRouteInput } from '../schema/route.schema'
-import RouteModel from '../models/route.model'
-import { deleteRoute, findRoute } from '../service/route.service'
+import { CreateTripInput, UpdateTripInput } from '../schema/trip.schema'
+import TripModel from '../models/trip.model'
+import { deleteTrip, findTrip } from '../service/trip.service'
 
-export async function createRouteHandler(req: Request<{}, {}, CreateRouteInput['body']>, res: Response) {
+export async function createTripHandler(req: Request<{}, {}, CreateTripInput['body']>, res: Response) {
   const userId = res.locals.user._id
   const { title, description, origin, destination } = req.body
   try {
-    const route = await RouteModel.create({ user: userId, title, description, origin, destination })
-    return res.status(201).send(route)
+    const trip = await TripModel.create({ user: userId, title, description, origin, destination })
+    return res.status(201).send(trip)
   } catch (error: Error | any) {
     return res.status(500).send(error.message)
   }
 }
 
-export async function updateRouteHandler(req: Request<UpdateRouteInput['params']>, res: Response) {
+export async function updateTripHandler(req: Request<UpdateTripInput['params']>, res: Response) {
   const userId = res.locals.user._id
-  const routeId = req.params.routeId
+  const tripId = req.params.tripId
   const update = req.body
   try {
-    const route = await findRoute({ userId, routeId })
-    if (!route) {
-      return res.status(404).send('Route not found')
+    const trip = await findTrip({ userId, tripId })
+    if (!trip) {
+      return res.status(404).send('Trip not found')
     }
-    if (route.user.toString() !== userId.toString()) {
+    if (trip.user.toString() !== userId.toString()) {
       return res.status(403).send('Not authorized')
     }
-    const updatedRoute = await RouteModel.findOneAndUpdate({ _id: routeId }, update, { new: true })
-    return res.status(200).send(updatedRoute)
+    const updatedTrip = await TripModel.findOneAndUpdate({ _id: tripId }, update, { new: true })
+    return res.status(200).send(updatedTrip)
   } catch (error: Error | any) {
     return res.status(500).send(error.message)
   }
 }
-export async function deleteRouteHandler(req: Request<UpdateRouteInput['params']>, res: Response) {
+export async function deleteTripHandler(req: Request<UpdateTripInput['params']>, res: Response) {
   const userId = res.locals.user._id
-  const routeId = req.params.routeId
+  const tripId = req.params.tripId
   try {
-    const route = await findRoute({ userId, routeId })
-    if (!route) {
-      return res.status(404).send('Route not found')
+    const trip = await findTrip({ userId, tripId })
+    if (!trip) {
+      return res.status(404).send('Trip not found')
     }
-    if (route.user.toString() !== userId.toString()) {
+    if (trip.user.toString() !== userId.toString()) {
       return res.status(403).send('Not authorized')
     }
-    await deleteRoute({ userId, routeId })
+    await deleteTrip({ userId, tripId })
     return res.status(200)
   } catch (error: Error | any) {
     return res.status(500).send(error.message)
   }
 }
 
-export async function getRouteHandler(req: Request<UpdateRouteInput['params']>, res: Response) {
+export async function getTripHandler(req: Request<UpdateTripInput['params']>, res: Response) {
   const userId = res.locals.user._id
-  const routeId = req.params.routeId
+  const tripId = req.params.tripId
   try {
-    const route = await findRoute({ userId, routeId })
-    if (!route) {
-      return res.status(404).send('Route not found')
+    const trip = await findTrip({ userId, tripId })
+    if (!trip) {
+      return res.status(404).send('Trip not found')
     }
-    return res.status(200).send(route)
+    return res.status(200).send(trip)
   } catch (error: Error | any) {
     return res.status(500).send(error.message)
   }

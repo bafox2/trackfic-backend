@@ -1,20 +1,16 @@
 import { FilterQuery, QueryOptions, UpdateQuery } from 'mongoose'
-import RouteModel, { IRoute, IRouteInput } from '../models/route.model'
+import TripModel, { ITrip, ITripInput } from '../models/trip.model'
 
-export async function createRoute(input: IRouteInput) {
-  return RouteModel.create(input)
+export async function createTrip(input: ITripInput) {
+  return TripModel.create(input)
 }
-export async function findRoute(query: FilterQuery<IRoute>, options: QueryOptions = { lean: true }) {
-  return RouteModel.findOne(query, {}, options)
+export async function findTrip(query: FilterQuery<ITrip>, options: QueryOptions = { lean: true }) {
+  return TripModel.findOne(query, {}, options)
 }
 
-export async function findAndUpdateRoute(
-  query: FilterQuery<IRoute>,
-  update: UpdateQuery<IRoute>,
-  options: QueryOptions
-) {
-  return RouteModel.findOneAndUpdate(query, update, options)
+export async function findAndUpdateTrip(query: FilterQuery<ITrip>, update: UpdateQuery<ITrip>, options: QueryOptions) {
+  return TripModel.findOneAndUpdate(query, update, options)
 }
-export async function deleteRoute(query: FilterQuery<IRoute>) {
-  return RouteModel.deleteOne(query)
+export async function deleteTrip(query: FilterQuery<ITrip>) {
+  return TripModel.deleteOne(query)
 }

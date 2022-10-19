@@ -20,27 +20,27 @@ const payload = {
 
 const params = {
   params: object({
-    routeId: string({
-      required_error: 'Route ID is required',
+    tripId: string({
+      required_error: 'Trip ID is required',
     }),
   }),
 }
 
-export const createRouteSchema = object({
+export const createTripSchema = object({
   ...payload,
 })
-export const updateRouteSchema = object({
+export const updateTripSchema = object({
   ...payload,
   ...params,
 })
-export const deleteRouteSchema = object({
+export const deleteTripSchema = object({
   ...params,
 })
-export const getRouteSchema = object({
+export const getTripSchema = object({
   ...params,
 })
 
-export type CreateRouteInput = TypeOf<typeof createRouteSchema>
-export type UpdateRouteInput = TypeOf<typeof updateRouteSchema>
-export type DeleteRouteInput = TypeOf<typeof deleteRouteSchema>
-export type GetRouteInput = TypeOf<typeof getRouteSchema>
+export type CreateTripInput = TypeOf<typeof createTripSchema>
+export type UpdateTripInput = TypeOf<typeof updateTripSchema>
+export type DeleteTripInput = TypeOf<typeof deleteTripSchema>
+export type GetTripInput = TypeOf<typeof getTripSchema>
