@@ -21,7 +21,7 @@ function routes(app: Express) {
   app.delete('/api/sessions', requireUser, deleteSessionHandler)
   app.post('api/routes', [requireUser, validate(createRouteSchema)], createRouteHandler)
   app.put('api/routes', [requireUser, validate(updateRouteSchema)], updateRouteHandler)
-  app.delete('api/routes', [requireUser, validate(deleteRouteSchema)], deleteRouteHandler)
+  app.delete('api/routes:routeID', [requireUser, validate(deleteRouteSchema)], deleteRouteHandler)
   app.get('api/routes/:routeID', [requireUser, validate(getRouteSchema)], getRouteHandler)
 }
 export default routes

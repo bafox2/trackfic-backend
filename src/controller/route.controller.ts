@@ -23,7 +23,7 @@ export async function updateRouteHandler(req: Request<UpdateRouteInput['params']
     if (!route) {
       return res.status(404).send('Route not found')
     }
-    if (route.user.toString() !== userId) {
+    if (route.user.toString() !== userId.toString()) {
       return res.status(403).send('Not authorized')
     }
     const updatedRoute = await RouteModel.findOneAndUpdate({ _id: routeId }, update, { new: true })
@@ -32,6 +32,24 @@ export async function updateRouteHandler(req: Request<UpdateRouteInput['params']
     return res.status(500).send(error.message)
   }
 }
+export async function deleteRouteHandler(req: Request<UpdateRouteInput['params']>, res: Response) {
+  const userId = res.locals.user._id
+  const routeId = req.params.routeId
+  try {
+    const route = await findRoute({ userId, routeId })
+    if (!route) {
+      return res.status(404).send('Route not found')
+    }
+    if (route.user.toString() !== userId.toString()) {
+      return res.status(403).send('Not authorized')
+    }
+    await deleteRoute({ userId, routeId })
+    return res.status(200)
+  } catch (error: Error | any) {
+    return res.status(500).send(error.message)
+  }
+}
+
 export async function getRouteHandler(req: Request<UpdateRouteInput['params']>, res: Response) {
   const userId = res.locals.user._id
   const routeId = req.params.routeId
@@ -40,11 +58,7 @@ export async function getRouteHandler(req: Request<UpdateRouteInput['params']>, 
     if (!route) {
       return res.status(404).send('Route not found')
     }
-    if (route.user.toString() !== userId) {
-      return res.status(403).send('Not authorized')
-    }
-    await deleteRoute({ userId, routeId })
-    return res.status(200).=
+    return res.status(200).send(route)
   } catch (error: Error | any) {
     return res.status(500).send(error.message)
   }

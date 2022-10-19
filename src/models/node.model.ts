@@ -1,21 +1,22 @@
 import mongoose from 'mongoose'
 import { IUser } from './user.model'
+import { IRoute, IRouteInput } from './route.model'
 
-export interface IRouteInput {
+export interface INodeInput {
   user: IUser['_id']
-  title: string
-  description: string
-  origin: string
-  destination: string
-  schedule: string
+  route: IRoute['_id']
+  date: Date
+  time: string
+  durationGeneral: number
+  durationNow: number
 }
 
-export interface IRoute extends IRouteInput, mongoose.Document {
+export interface INode extends IRouteInput, mongoose.Document {
   createdAt: Date
   updatedAt: Date
 }
 
-const routeSchema = new mongoose.Schema(
+const nodeSchema = new mongoose.Schema(
   {
     user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
     title: { type: String, required: true },
@@ -28,6 +29,6 @@ const routeSchema = new mongoose.Schema(
   }
 )
 
-const RouteModel = mongoose.model<IRoute>('Route', routeSchema)
+const NodeModel = mongoose.model<INode>('Node', nodeSchema)
 
-export default RouteModel
+export default NodeModel
