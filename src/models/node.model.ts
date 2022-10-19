@@ -1,17 +1,17 @@
 import mongoose from 'mongoose'
 import { IUser } from './user.model'
-import { IRoute, IRouteInput } from './route.model'
+import { ITrip, ITripInput } from './trip.model'
 
-export interface INodeInput {
+export interface ITripNode {
   user: IUser['_id']
-  route: IRoute['_id']
+  trip: ITrip['_id']
   date: Date
   time: string
   durationGeneral: number
   durationNow: number
 }
 
-export interface INode extends IRouteInput, mongoose.Document {
+export interface ITripNode extends ITripInput, mongoose.Document {
   createdAt: Date
   updatedAt: Date
 }
@@ -29,6 +29,6 @@ const nodeSchema = new mongoose.Schema(
   }
 )
 
-const NodeModel = mongoose.model<INode>('Node', nodeSchema)
+const NodeModel = mongoose.model<ITripNode>('Node', nodeSchema)
 
 export default NodeModel

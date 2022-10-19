@@ -5,13 +5,8 @@ import validate from './middleware/validate'
 import { createSessionSchema } from './schema/session.schema'
 import { createUserSchema } from './schema/user.schema'
 import requireUser from './middleware/requireUser'
-import { createRouteSchema, updateRouteSchema, deleteRouteSchema, getRouteSchema } from './schema/route.schema'
-import {
-  createRouteHandler,
-  updateRouteHandler,
-  getRouteHandler,
-  deleteRouteHandler,
-} from './controller/route.controller'
+import { createTripSchema, updateTripSchema, deleteTripSchema, getTripSchema } from './schema/trip.schema'
+import { createTripHandler, updateTripHandler, getTripHandler, deleteTripHandler } from './controller/trip.controller'
 
 function routes(app: Express) {
   app.get('/healthcheck', (req: Request, res: Response) => res.sendStatus(200))
@@ -19,9 +14,9 @@ function routes(app: Express) {
   app.post('/api/sessions', validate(createSessionSchema), createUserSessionHandler)
   app.get('/api/sessions', requireUser, getUserSessionsHandler)
   app.delete('/api/sessions', requireUser, deleteSessionHandler)
-  app.post('api/routes', [requireUser, validate(createRouteSchema)], createRouteHandler)
-  app.put('api/routes', [requireUser, validate(updateRouteSchema)], updateRouteHandler)
-  app.delete('api/routes:routeID', [requireUser, validate(deleteRouteSchema)], deleteRouteHandler)
-  app.get('api/routes/:routeID', [requireUser, validate(getRouteSchema)], getRouteHandler)
+  app.post('api/trips', [requireUser, validate(createTripSchema)], createTripHandler)
+  app.put('api/trips', [requireUser, validate(updateTripSchema)], updateTripHandler)
+  app.delete('api/trips:tripID', [requireUser, validate(deleteTripSchema)], deleteTripHandler)
+  app.get('api/trips/:tripID', [requireUser, validate(getTripSchema)], getTripHandler)
 }
 export default routes

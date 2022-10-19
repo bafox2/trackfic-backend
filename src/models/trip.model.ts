@@ -1,7 +1,7 @@
 import mongoose from 'mongoose'
 import { IUser } from './user.model'
 
-export interface IRouteInput {
+export interface ITripInput {
   user: IUser['_id']
   title: string
   description: string
@@ -10,12 +10,12 @@ export interface IRouteInput {
   schedule: string
 }
 
-export interface IRoute extends IRouteInput, mongoose.Document {
+export interface ITrip extends ITripInput, mongoose.Document {
   createdAt: Date
   updatedAt: Date
 }
 
-const routeSchema = new mongoose.Schema(
+const tripSchema = new mongoose.Schema(
   {
     user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
     title: { type: String, required: true },
@@ -28,6 +28,6 @@ const routeSchema = new mongoose.Schema(
   }
 )
 
-const RouteModel = mongoose.model<IRoute>('Route', routeSchema)
+const TripModel = mongoose.model<ITrip>('Trip', tripSchema)
 
-export default RouteModel
+export default TripModel
