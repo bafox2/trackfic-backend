@@ -1,10 +1,12 @@
 import { FilterQuery, QueryOptions, UpdateQuery } from 'mongoose'
 import TripModel, { ITrip, ITripInput } from '../models/trip.model'
+import log from '../utils/logger'
 
 export async function createTrip(input: ITripInput) {
   return TripModel.create(input)
 }
 export async function findTrip(query: FilterQuery<ITrip>, options: QueryOptions = { lean: true }) {
+  log.info('findTrip', { query, options })
   return TripModel.findOne(query, {}, options)
 }
 

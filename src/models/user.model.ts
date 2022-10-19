@@ -12,7 +12,7 @@ export interface IUserInput {
 export interface IUser extends IUserInput, Document {
   createdAt: Date
   updatedAt: Date
-  comparePassword: (candidatePassword: string) => Promise<boolean | Error>
+  comparePassword: (candatePassword: string) => Promise<boolean | Error>
 }
 
 const UserSchema = new Schema(

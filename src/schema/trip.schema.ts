@@ -21,7 +21,7 @@ const payload = {
 const params = {
   params: object({
     tripId: string({
-      required_error: 'Trip ID is required',
+      required_error: 'Trip Id is required',
     }),
   }),
 }

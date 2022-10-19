@@ -14,9 +14,9 @@ function routes(app: Express) {
   app.post('/api/sessions', validate(createSessionSchema), createUserSessionHandler)
   app.get('/api/sessions', requireUser, getUserSessionsHandler)
   app.delete('/api/sessions', requireUser, deleteSessionHandler)
-  app.post('api/trips', [requireUser, validate(createTripSchema)], createTripHandler)
-  app.put('api/trips', [requireUser, validate(updateTripSchema)], updateTripHandler)
-  app.delete('api/trips:tripID', [requireUser, validate(deleteTripSchema)], deleteTripHandler)
-  app.get('api/trips/:tripID', [requireUser, validate(getTripSchema)], getTripHandler)
+  app.post('/api/trips', [requireUser, validate(createTripSchema)], createTripHandler)
+  app.put('/api/trips', [requireUser, validate(updateTripSchema)], updateTripHandler)
+  app.delete('/api/trips:tripId', [requireUser, validate(deleteTripSchema)], deleteTripHandler)
+  app.get('/api/trips/:tripId', validate(getTripSchema), getTripHandler)
 }
 export default routes

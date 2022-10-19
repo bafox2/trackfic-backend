@@ -4,10 +4,10 @@ import { IUser } from './user.model'
 export interface ITripInput {
   user: IUser['_id']
   title: string
-  description: string
+  description?: string
+  schedule: string
   origin: string
   destination: string
-  schedule: string
 }
 
 export interface ITrip extends ITripInput, mongoose.Document {
@@ -22,6 +22,7 @@ const tripSchema = new mongoose.Schema(
     description: { type: String, required: false },
     origin: { type: String, required: true },
     destination: { type: String, required: true },
+    schedule: { type: String, required: true },
   },
   {
     timestamps: true,
