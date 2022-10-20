@@ -8,7 +8,12 @@ export async function createTripHandler(req: Request<{}, {}, CreateTripInput['bo
   const userId = res.locals.user._id
   const { title, description, origin, destination, schedule } = req.body
   try {
+    if (!userId) {
+      return res.status(403).send({ message: 'Unauthorized, please log in' })
+    }
     const trip = await TripModel.create({ user: userId, title, description, origin, destination, schedule })
+
+    log.info('trip controller', { trip })
     return res.status(200).send(trip)
   } catch (error: Error | any) {
     return res.status(500).send(error.message)

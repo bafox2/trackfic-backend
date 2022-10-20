@@ -6,6 +6,7 @@ import { NextFunction } from 'express'
 export interface IUserInput {
   email: string
   password: string
+  passwordConfirmation: string
   name: string
 }
 
