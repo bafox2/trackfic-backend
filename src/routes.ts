@@ -19,4 +19,5 @@ function routes(app: Express) {
   app.delete('/api/trips:tripId', [requireUser, validate(deleteTripSchema)], deleteTripHandler)
   app.get('/api/trips/:tripId', validate(getTripSchema), getTripHandler)
 }
+
 export default routes

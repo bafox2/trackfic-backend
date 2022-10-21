@@ -6,12 +6,17 @@ import { omit } from 'lodash'
 
 export async function createUserHandler(req: Request<{}, {}, CreateUserInput['body']>, res: Response) {
   try {
-    logger.info('Creating user')
     const user = await createUser(req.body)
+
     return res.status(201).send(omit(user, 'password'))
-  } catch (error: Error | any) {
-    // catch user because already exists
-    logger.error(error)
-    res.status(409).json({ message: 'User already exists' })
+  } catch (error: any) {
+    return res.status(400).send({
+      errors: [
+        {
+          message: 'Error creating user',
+          error: error.message,
+        },
+      ],
+    })
   }
 }

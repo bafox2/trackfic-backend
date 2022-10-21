@@ -57,7 +57,6 @@ describe('trip', () => {
       it('should return 200 and the product', async () => {
         const trip = await createTrip(tripPayload)
         const tripData = omit(trip, ['updatedAt', 'createdAt'])
-        log.info('trip', { trip })
         const { body, status } = await supertest(app).get(`/api/trips/${trip._id}`)
         expect(status).toEqual(200)
         expect(body).toEqual(tripDataMongoose)
@@ -67,12 +66,14 @@ describe('trip', () => {
   })
 
   describe('create trip route', () => {
-    // describe('given the user is not logged in', () => {
-    //   it('should return a 403', async () => {
-    //     const { status } = await supertest(app).post(`/api/trips`).send(tripPayload)
-    //     expect(status).toEqual(403)
-    //   })
-    // })
+    describe('given the user is not logged in', () => {
+      it('should return a 401', async () => {
+        const obj = await supertest(app).post(`/api/trips`)
+
+        log.info('obj', { obj })
+        expect(obj.status).toEqual(401)
+      })
+    })
 
     describe('given the user is logged in', () => {
       it('should return a 200 and the trip', async () => {

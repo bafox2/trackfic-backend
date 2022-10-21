@@ -1,6 +1,7 @@
 import UserModel, { IUserInput, IUser } from '../models/user.model'
 import { omit } from 'lodash'
 import { FilterQuery } from 'mongoose'
+import log from '../utils/logger'
 export async function createUser(input: IUserInput): Promise<any> {
   try {
     const user = await UserModel.create(input)
@@ -10,11 +11,7 @@ export async function createUser(input: IUserInput): Promise<any> {
   }
 }
 
-export async function validatePassword({
-  email, password
-}: {
-  email: string, password: string
-}) {
+export async function validatePassword({ email, password }: { email: string; password: string }) {
   const user = await UserModel.findOne({ email })
   if (!user) {
     return false
@@ -23,9 +20,8 @@ export async function validatePassword({
   if (!isValid) {
     return false
   }
-  return omit(user.toJSON(), 'password')
+  return omit(user, 'password')
 }
-
 export async function findUser(query: FilterQuery<IUser>) {
   return UserModel.findOne(query).lean()
 }

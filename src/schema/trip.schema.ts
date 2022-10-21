@@ -40,6 +40,7 @@ export const getTripSchema = object({
   ...params,
 })
 
+//we need these because types cannot be used as values
 export type CreateTripInput = TypeOf<typeof createTripSchema>
 export type UpdateTripInput = TypeOf<typeof updateTripSchema>
 export type DeleteTripInput = TypeOf<typeof deleteTripSchema>
