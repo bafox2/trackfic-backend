@@ -7,7 +7,7 @@ import { IUser } from './user.model'
 export interface ISessionInput {
   user: IUser['_id']
   valid: boolean
-  userAgent: string
+  userAgent: string | undefined
 }
 
 export interface ISession extends ISessionInput, Document {
@@ -17,17 +17,15 @@ export interface ISession extends ISessionInput, Document {
 
 const sessionSchema = new Schema(
   {
-    user: {type: mongoose.Schema.Types.ObjectId, ref: 'User'}, 
+    user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
     valid: {
       type: Boolean,
-      default: true
+      default: true,
     },
     userAgent: {
       type: String,
-      required: true
-
-    }
-    
+      required: false,
+    },
   },
   {
     timestamps: true,

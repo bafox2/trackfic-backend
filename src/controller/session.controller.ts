@@ -3,19 +3,30 @@ import { createSession, findSessions, updateSession } from '../service/session.s
 import { validatePassword } from '../service/user.service'
 import { signJwt } from '../utils/jwt.utils'
 import config from 'config'
+import log from '../utils/logger'
 
 export async function createUserSessionHandler(req: Request, res: Response) {
   const user = await validatePassword(req.body)
   if (!user) {
-    return res.status(401).send('Invalid email or password')
+    return res.status(401).send({
+      errors: [
+        {
+          message: 'Incorrect email or password',
+        },
+      ],
+    })
   }
+
   const session = await createSession(user._id, req.get('User-Agent') || '')
-  const refreshToken = signJwt({ ...user, session: session._id }, { expiresIn: config.get('refreshTokenTtl') })
-  const accessToken = signJwt({ ...user, session: session._id }, { expiresIn: config.get('accessTokenTtl') })
+  const accessToken = signJwt({ user, session }, { expiresIn: config.get('accessTokenTtl') }) // 15 min
+  const refreshToken = signJwt({ session: session._id }, { expiresIn: config.get('refreshTokenTtl') }) // 1 year
+
+  // const accessToken = signJwt({ ...user, session: session._id }, { expiresIn: config.get('accessTokenTtl') })
   // const refreshToken = signJwt(
   //   { ...user, session: session._id },
-  //   { expiresIn: config.get("refreshTokenTtl") } // 15 minutes
-  // );
+  //   { expiresIn: config.get('refreshTokenTtl') } // 15 minutes
+  // )
+
   return res.send({ accessToken, refreshToken })
 }
 
