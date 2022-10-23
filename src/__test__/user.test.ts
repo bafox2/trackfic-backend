@@ -7,32 +7,36 @@ import { MongoMemoryServer } from 'mongodb-memory-server'
 const app = createServer()
 const userId = new mongoose.Types.ObjectId().toString()
 
+const user = {
+  email: 'jane@gmail.com',
+  password: '123456',
+}
 const userPayload = {
   _id: userId,
-  email: 'janedoe@janedoe.com',
+  email: 'jane@gmail.com',
   name: 'Jane Doe',
 }
 const userInputPayload = {
   name: 'Jane Doe',
-  email: 'hanedoe@gmail.com',
+  email: 'jane@gmail.com',
   password: '123456',
   passwordConfirmation: '123456',
 }
 const userInputPayload2 = {
   name: 'Jane Doe',
-  email: 'hanedoe@gmail.com',
+  email: 'jane2@gmail.com',
   password: '123456',
   passwordConfirmation: '123456',
 }
 const userInputPayloadWrongConfirm = {
   name: 'Jane Doe',
-  email: 'hanedoe@gmail.com',
+  email: 'jane@gmail.com',
   password: '123456',
   passwordConfirmation: '123457',
 }
 const userInputPayloadWrongBody = {
   name: 'Jane Doe',
-  email: 'hanedoe@gmail.com',
+  email: 'jane@gmail.com',
   password: '123456',
   passwordConfirmation: '123457',
   wrong: 'wrong',
@@ -54,7 +58,7 @@ describe('user model', () => {
     describe('name is already taken', () => {
       it('should return 400', async () => {
         await supertest(app).post('/api/users').send(userInputPayload)
-        const { body, status } = await supertest(app).post('/api/users').send(userInputPayload2)
+        const { body, status } = await supertest(app).post('/api/users').send(userInputPayload)
         expect(status).toEqual(400)
         expect(body).toHaveProperty('errors')
       })
@@ -101,5 +105,20 @@ describe('user model', () => {
     //   //normal usecase
     //   //refreshes
     // })
+  })
+  describe('/me api route', () => {
+    describe('given a valid token', () => {
+      it('should return a user', async () => {
+        await supertest(app).post('/api/users').send(userInputPayload)
+        const session = await supertest(app).post('/api/sessions').send(user)
+        expect(session.body).toHaveProperty('accessToken')
+        const { body, statusCode } = await supertest(app)
+          .get('/api/me')
+          .set('Cookie', [`accessToken=${session.body.accessToken}`])
+        expect(statusCode).toEqual(200)
+        // const res = await supertest(app).get('/api/me').set('Authorization', `Bearer ${session.body.accessToken}`)
+        // expect(res.statusCode).toEqual(200)
+      })
+    })
   })
 })

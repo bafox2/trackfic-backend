@@ -6,7 +6,6 @@ export async function createTrip(input: ITripInput) {
   return TripModel.create(input)
 }
 export async function findTrip(query: FilterQuery<ITrip>, options: QueryOptions = { lean: true }) {
-  log.info('findTrip', { query, options })
   return TripModel.findOne(query, {}, options)
 }
 

@@ -9,6 +9,16 @@ import { signJwt } from '../utils/jwt.utils'
 
 const app = createServer()
 const userId = new mongoose.Types.ObjectId().toString()
+const userInputPayload = {
+  name: 'Jane Doe',
+  email: 'jane@gmail.com',
+  password: '123456',
+  passwordConfirmation: '123456',
+}
+const user = {
+  email: 'jane@gmail.com',
+  password: '123456',
+}
 export const tripPayload = {
   user: userId,
   title: 'Commute to work',
@@ -31,7 +41,7 @@ export const tripDataMongoose = {
 }
 export const userPayload = {
   _id: userId,
-  email: 'jane.doe@example.com',
+  email: 'jane@gmail.com',
   name: 'Jane Doe',
 }
 
@@ -60,7 +70,6 @@ describe('trip', () => {
         const { body, status } = await supertest(app).get(`/api/trips/${trip._id}`)
         expect(status).toEqual(200)
         expect(body).toEqual(tripDataMongoose)
-        //createdAt and updatedAt are not equal
       })
     })
   })
@@ -69,27 +78,22 @@ describe('trip', () => {
     describe('given the user is not logged in', () => {
       it('should return a 401', async () => {
         const obj = await supertest(app).post(`/api/trips`)
-
-        log.info('obj', { obj })
         expect(obj.status).toEqual(401)
       })
     })
 
     describe('given the user is logged in', () => {
       it('should return a 200 and the trip', async () => {
-        const jwt = signJwt(userPayload)
+        //the test isn't working because jwt.utils signJwt function
+        await supertest(app).post('/api/users').send(userInputPayload)
+        const session = await supertest(app).post('/api/sessions').send(user)
+        expect(session.body).toHaveProperty('accessToken')
         const { body, status } = await supertest(app)
-          .post(`/api/trips`)
-          .set('Authorization', `Bearer ${jwt}`)
+          .post('/api/trips')
+          .set('Cookie', [`accessToken=${session.body.accessToken}`])
           .send(tripPayload)
         expect(status).toEqual(200)
-        expect(body).toEqual({
-          ...tripPayload,
-          __v: 0,
-          _id: body._id,
-          createdAt: body.createdAt,
-          updatedAt: body.updatedAt,
-        })
+        expect(body).toEqual(tripDataMongoose)
       })
     })
   })

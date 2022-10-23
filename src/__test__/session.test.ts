@@ -10,10 +10,6 @@ import log from '../utils/logger'
 
 const app = createServer()
 
-//session
-//normal error usecase
-//refresher
-
 const userInputPayload = {
   name: 'Jane Doe',
   email: 'jane@gmail.com',
@@ -57,6 +53,32 @@ describe('session', () => {
       const res = await supertest(app).post('/api/sessions').send(userWrong)
       expect(res.body).not.toHaveProperty('accessToken')
       expect(res.body).toHaveProperty('errors')
+    })
+  })
+
+  describe('delete', () => {
+    it('should remove credentials', async () => {
+      await supertest(app).post('/api/users').send(userInputPayload)
+      const session = await supertest(app).post('/api/sessions').send(user)
+      expect(session.body).toHaveProperty('accessToken')
+      const res = await supertest(app)
+        .delete('/api/sessions')
+        .set('Authorization', `Bearer ${session.body.accessToken}`)
+      expect(res.body).not.toHaveProperty('accesToken')
+    })
+  })
+
+  describe('refreshes correctly', () => {
+    it('should refresh', async () => {
+      await supertest(app).post('/api/users').send(userInputPayload)
+      const session = await supertest(app).post('/api/sessions').send(user)
+      expect(session.body).toHaveProperty('refreshToken')
+      //need to have the token expire, check if it refreshes
+      const res = await supertest(app)
+        .post('/api/sessions/')
+        .set('Authorization', `Bearer ${session.body.refreshToken}`)
+        .send(user)
+      expect(res.body).toHaveProperty('accessToken')
     })
   })
 })

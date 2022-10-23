@@ -5,7 +5,7 @@ import { deleteTrip, findTrip } from '../service/trip.service'
 import log from '../utils/logger'
 
 export async function createTripHandler(req: Request<{}, {}, CreateTripInput['body']>, res: Response) {
-  const userId = res.locals.user._id
+  const userId = res.locals.user.user._id
   const { title, description, origin, destination, schedule } = req.body
   try {
     if (!userId) {
@@ -13,10 +13,10 @@ export async function createTripHandler(req: Request<{}, {}, CreateTripInput['bo
     }
     const trip = await TripModel.create({ user: userId, title, description, origin, destination, schedule })
 
-    log.info('trip controller', { trip })
     return res.status(200).send(trip)
   } catch (error: Error | any) {
-    return res.status(500).send(error.message)
+    log.error(error)
+    return res.status(500).send({ message: 'Internal server error' })
   }
 }
 
@@ -27,10 +27,22 @@ export async function updateTripHandler(req: Request<UpdateTripInput['params']>,
   try {
     const trip = await findTrip({ userId, tripId })
     if (!trip) {
-      return res.status(404).send('Trip not found')
+      return res.status(404).send({
+        errors: [
+          {
+            message: 'Trip not found',
+          },
+        ],
+      })
     }
     if (trip.user.toString() !== userId.toString()) {
-      return res.status(403).send('Not authorized')
+      return res.status(403).send({
+        errors: [
+          {
+            message: 'Not authorized to update this trip',
+          },
+        ],
+      })
     }
     const updatedTrip = await TripModel.findOneAndUpdate({ _id: tripId }, update, { new: true })
     return res.status(200).send(updatedTrip)
@@ -44,13 +56,31 @@ export async function deleteTripHandler(req: Request<DeleteTripInput['params']>,
   try {
     const trip = await findTrip({ userId, tripId })
     if (!userId) {
-      return res.status(403).send('You are not logged')
+      return res.status(403).send({
+        errors: [
+          {
+            message: 'No user found, please log in',
+          },
+        ],
+      })
     }
     if (!trip) {
-      return res.status(404).send('Trip not found')
+      return res.status(404).send({
+        errors: [
+          {
+            message: 'Trip not found',
+          },
+        ],
+      })
     }
     if (trip.user.toString() !== userId.toString()) {
-      return res.status(403).send('Not authorized')
+      return res.status(403).send({
+        errors: [
+          {
+            message: 'Not authorized to delete this trip',
+          },
+        ],
+      })
     }
     await deleteTrip({ userId, tripId })
     return res.status(200)
@@ -64,7 +94,13 @@ export async function getTripHandler(req: Request<GetTripInput['params']>, res: 
   try {
     const trip = await findTrip({ tripId })
     if (!trip) {
-      return res.status(404).send('Trip not found')
+      return res.status(404).send({
+        errors: [
+          {
+            message: 'No trup found',
+          },
+        ],
+      })
     }
     return res.status(200).send(trip)
   } catch (error: Error | any) {

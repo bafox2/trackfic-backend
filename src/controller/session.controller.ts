@@ -16,16 +16,26 @@ export async function createUserSessionHandler(req: Request, res: Response) {
       ],
     })
   }
-
   const session = await createSession(user._id, req.get('User-Agent') || '')
-  const accessToken = signJwt({ user, session }, { expiresIn: config.get('accessTokenTtl') }) // 15 min
-  const refreshToken = signJwt({ session: session._id }, { expiresIn: config.get('refreshTokenTtl') }) // 1 year
 
-  // const accessToken = signJwt({ ...user, session: session._id }, { expiresIn: config.get('accessTokenTtl') })
-  // const refreshToken = signJwt(
-  //   { ...user, session: session._id },
-  //   { expiresIn: config.get('refreshTokenTtl') } // 15 minutes
-  // )
+  const accessToken = signJwt({ user, session }, { expiresIn: config.get('accessTokenTtl') })
+  const refreshToken = signJwt({ session: session._id }, { expiresIn: config.get('refreshTokenTtl') })
+
+  res.cookie('accessToken', accessToken, {
+    maxAge: config.get('accessTokenTtlMs'),
+    httpOnly: true,
+    domain: config.get('domain'),
+    sameSite: 'strict',
+    secure: false,
+  })
+
+  res.cookie('refrershToken', refreshToken, {
+    maxAge: config.get('refreshTokenTtlMs'),
+    httpOnly: true,
+    domain: config.get('domain'),
+    sameSite: 'strict',
+    secure: false,
+  })
 
   return res.send({ accessToken, refreshToken })
 }
