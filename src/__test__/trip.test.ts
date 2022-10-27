@@ -31,7 +31,7 @@ describe('trip', () => {
     })
     describe('given the route exists', () => {
       it('should return 200 and the product', async () => {
-        const trip = await createTrip(tripPayload)
+        const trip = await createTrip({ ...tripPayload, user: userId })
         const tripData = omit(trip, ['updatedAt', 'createdAt'])
         const { body, status } = await supertest(app).get(`/api/trips/${trip._id}`)
         expect(status).toEqual(200)
