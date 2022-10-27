@@ -6,29 +6,9 @@ import TripNodeModel, { ITripNode } from '../models/tripNode.model'
 import { createTrip } from '../service/trip.service'
 import log from '../utils/logger'
 import { omit } from 'lodash'
+import { userInputPayload, user, tripPayload } from './testValues.spec'
 
 const app = createServer()
-const userId = new mongoose.Types.ObjectId().toString()
-const userInputPayload = {
-  name: 'Jane Doe',
-  email: 'jane@gmail.com',
-  password: '123456',
-  passwordConfirmation: '123456',
-}
-
-const user = {
-  email: 'jane@gmail.com',
-  password: '123456',
-}
-
-const tripPayload = {
-  user: userId,
-  title: 'Commute to work',
-  description: 'My daily commute to work',
-  origin: '6400 hoadly road, Virginia',
-  destination: 'Hidden Spring Dr. Manassas, VA',
-  schedule: '* * * * *',
-}
 
 describe('mongoose statics and methods for cron', () => {
   beforeAll(async () => {
@@ -42,7 +22,6 @@ describe('mongoose statics and methods for cron', () => {
   })
   describe('given everything valid', () => {
     it('should return a 200 and the trip', async () => {
-      //the test isn't working because jwt.utils signJwt function
       await supertest(app).post('/api/users').send(userInputPayload)
       const session = await supertest(app).post('/api/sessions').send(user)
       expect(session.body).toHaveProperty('accessToken')

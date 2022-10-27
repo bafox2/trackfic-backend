@@ -3,44 +3,16 @@ import mongoose from 'mongoose'
 import createServer from '../utils/server'
 import supertest from 'supertest'
 import { MongoMemoryServer } from 'mongodb-memory-server'
+import {
+  userInputPayload,
+  user,
+  userPayload,
+  userInputPayloadWrongConfirm,
+  userInputPayloadWrongBody,
+} from './testValues.spec'
 
 const app = createServer()
 const userId = new mongoose.Types.ObjectId().toString()
-
-const user = {
-  email: 'jane@gmail.com',
-  password: '123456',
-}
-const userPayload = {
-  _id: userId,
-  email: 'jane@gmail.com',
-  name: 'Jane Doe',
-}
-const userInputPayload = {
-  name: 'Jane Doe',
-  email: 'jane@gmail.com',
-  password: '123456',
-  passwordConfirmation: '123456',
-}
-const userInputPayload2 = {
-  name: 'Jane Doe',
-  email: 'jane2@gmail.com',
-  password: '123456',
-  passwordConfirmation: '123456',
-}
-const userInputPayloadWrongConfirm = {
-  name: 'Jane Doe',
-  email: 'jane@gmail.com',
-  password: '123456',
-  passwordConfirmation: '123457',
-}
-const userInputPayloadWrongBody = {
-  name: 'Jane Doe',
-  email: 'jane@gmail.com',
-  password: '123456',
-  passwordConfirmation: '123457',
-  wrong: 'wrong',
-}
 
 describe('user model', () => {
   beforeAll(async () => {

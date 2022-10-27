@@ -7,25 +7,9 @@ import mongoose from 'mongoose'
 import supertest from 'supertest'
 import { MongoMemoryServer } from 'mongodb-memory-server'
 import log from '../utils/logger'
+import { userInputPayload, user, userWrong } from './testValues.spec'
 
 const app = createServer()
-
-const userInputPayload = {
-  name: 'Jane Doe',
-  email: 'jane@gmail.com',
-  password: '123456',
-  passwordConfirmation: '123456',
-}
-
-const user = {
-  email: 'jane@gmail.com',
-  password: '123456',
-}
-
-const userWrong = {
-  email: 'jane@gmail.com',
-  password: '1234567',
-}
 
 describe('session', () => {
   beforeAll(async () => {
