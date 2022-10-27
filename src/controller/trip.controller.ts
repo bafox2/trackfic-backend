@@ -14,9 +14,9 @@ export async function createTripHandler(req: Request<{}, {}, CreateTripInput['bo
     const trip = await TripModel.create({ user: userId, title, description, origin, destination, schedule })
 
     return res.status(200).send(trip)
-  } catch (error: Error | any) {
+  } catch (error: any) {
     log.error(error)
-    return res.status(500).send({ message: 'Internal server error' })
+    return res.status(500).send({ errors: [{ message: error.message || 'Internal server error' }] })
   }
 }
 
@@ -47,7 +47,7 @@ export async function updateTripHandler(req: Request<UpdateTripInput['params']>,
     const updatedTrip = await TripModel.findOneAndUpdate({ _id: tripId }, update, { new: true })
     return res.status(200).send(updatedTrip)
   } catch (error: Error | any) {
-    return res.status(500).send(error.message)
+    return res.status(500).send({ errors: [{ message: error.message || 'Internal server error' }] })
   }
 }
 export async function deleteTripHandler(req: Request<DeleteTripInput['params']>, res: Response) {
@@ -85,7 +85,7 @@ export async function deleteTripHandler(req: Request<DeleteTripInput['params']>,
     await deleteTrip({ userId, tripId })
     return res.status(200)
   } catch (error: Error | any) {
-    return res.status(500).send(error.message)
+    return res.status(500).send({ errors: [{ message: error.message || 'Internal server error' }] })
   }
 }
 
@@ -104,6 +104,6 @@ export async function getTripHandler(req: Request<GetTripInput['params']>, res: 
     }
     return res.status(200).send(trip)
   } catch (error: Error | any) {
-    return res.status(500).send(error.message)
+    return res.status(500).send({ errors: [{ message: error.message || 'Internal server error' }] })
   }
 }

@@ -17,6 +17,8 @@ function routes(app: Express) {
   app.delete('/api/sessions', requireUser, deleteSessionHandler)
   app.post('/api/trips', [requireUser, validate(createTripSchema)], createTripHandler)
   app.put('/api/trips', [requireUser, validate(updateTripSchema)], updateTripHandler)
+  // app.put('/api/trips:tripId/pause', [requireUser, validate(updateTripSchema)], updateTripHandler)
+  // app.delete('/api/trips:tripId:nodeId', [requireUser, validate(updateTripSchema)], updateTripHandler)
   app.delete('/api/trips:tripId', [requireUser, validate(deleteTripSchema)], deleteTripHandler)
   app.get('/api/trips/:tripId', validate(getTripSchema), getTripHandler)
 }
