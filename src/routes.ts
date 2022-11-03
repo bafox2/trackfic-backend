@@ -12,22 +12,41 @@ import {
   getTripHandler,
   deleteTripHandler,
   getTripsByUserHandler,
+  getNodesbyTripsHandler,
 } from './controller/trip.controller'
+import {
+  createTripNodeHandler,
+  deleteTripNodeHandler,
+  getTripNodeHandler,
+  updateTripNodeHandler,
+} from './controller/tripNode.controller'
+import {
+  createTripNodeSchema,
+  deleteTripNodeSchema,
+  getTripNodeSchema,
+  updateTripNodeSchema,
+} from './schema/tripNode.schema'
 
 function routes(app: Express) {
-  app.get('/healthcheck', (req: Request, res: Response) => res.sendStatus(200))
   app.post('/api/users', validate(createUserSchema), createUserHandler)
-  app.get('/api/me', requireUser, getCurrentUser)
-  app.post('/api/sessions', validate(createSessionSchema), createUserSessionHandler)
+
   app.get('/api/sessions', requireUser, getUserSessionsHandler)
+  app.post('/api/sessions', validate(createSessionSchema), createUserSessionHandler)
   app.delete('/api/sessions', requireUser, deleteSessionHandler)
-  app.post('/api/trips', [requireUser, validate(createTripSchema)], createTripHandler)
-  app.put('/api/trips', [requireUser, validate(updateTripSchema)], updateTripHandler)
+
   app.get('/api/trips/:tripId', validate(getTripSchema), getTripHandler)
-  // app.put('/api/trips:tripId/pause', [requireUser, validate(updateTripSchema)], updateTripHandler)
-  // app.delete('/api/trips:tripId:nodeId', [requireUser, validate(updateTripSchema)], updateTripHandler)
-  app.delete('/api/trips:tripId', [requireUser, validate(deleteTripSchema)], deleteTripHandler)
+  app.post('/api/trips', [requireUser, validate(createTripSchema)], createTripHandler)
+  app.put('/api/trips/:tripId', [requireUser, validate(updateTripSchema)], updateTripHandler)
+  app.delete('/api/trips/:tripId', [requireUser, validate(deleteTripSchema)], deleteTripHandler)
+
+  app.get('/api/me', requireUser, getCurrentUser)
   app.get('/api/me/trips', requireUser, getTripsByUserHandler)
+  app.get('/api/me/nodes', requireUser, getNodesbyTripsHandler)
+
+  app.get('/api/tripNodes/:tripNodeId', [requireUser, validate(getTripNodeSchema)], getTripNodeHandler)
+  app.post('/api/tripNodes', [requireUser, validate(createTripNodeSchema)], createTripNodeHandler)
+  app.put('/api/tripNodes/:tripNodeId', [requireUser, validate(updateTripNodeSchema)], updateTripNodeHandler)
+  app.delete('/api/tripNodes/:tripNodeId', [requireUser, validate(deleteTripNodeSchema)], deleteTripNodeHandler)
 }
 
 export default routes

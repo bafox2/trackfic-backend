@@ -3,15 +3,14 @@ import createServer from '../utils/server'
 import { MongoMemoryServer } from 'mongodb-memory-server'
 import mongoose from 'mongoose'
 import { createTrip } from '../service/trip.service'
-import log from '../utils/logger'
 import { omit } from 'lodash'
-import { signJwt } from '../utils/jwt.utils'
-import { userInputPayload, user, tripPayload, tripDataMongoose } from './testValues.spec'
+import { userInputPayload, user, tripPayload, tripDataMongoose, tripNodePayload } from './testValues.spec'
+import exp from 'constants'
 
 const app = createServer()
-const userId = new mongoose.Types.ObjectId().toString()
 
 describe('trip', () => {
+  const userId = new mongoose.Types.ObjectId().toString()
   beforeAll(async () => {
     const mongod = await MongoMemoryServer.create()
     await mongoose.connect(mongod.getUri())
@@ -29,6 +28,7 @@ describe('trip', () => {
         await supertest(app).get(`/api/trips/${tripId}`).expect(404)
       })
     })
+
     describe('given the route exists', () => {
       it('should return 200 and the product', async () => {
         const trip = await createTrip({ ...tripPayload, user: userId })
@@ -50,7 +50,6 @@ describe('trip', () => {
 
     describe('given the user is logged in', () => {
       it('should return a 200 and the trip', async () => {
-        //the test isn't working because jwt.utils signJwt function
         await supertest(app).post('/api/users').send(userInputPayload)
         const session = await supertest(app).post('/api/sessions').send(user)
         expect(session.body).toHaveProperty('accessToken')
@@ -67,4 +66,75 @@ describe('trip', () => {
   describe('update trip route', () => {})
 
   describe('delete trip route', () => {})
+
+  describe('/me/trips', () => {
+    const userId = new mongoose.Types.ObjectId().toString()
+    describe('given the user is not logged in', () => {
+      it('should return a 401', async () => {
+        const obj = await supertest(app).get(`/api/me/trips`)
+        expect(obj.status).toEqual(401)
+      })
+    })
+
+    describe('given the user is logged in', () => {
+      it('should return a trip', async () => {
+        await supertest(app).post('/api/users').send(userInputPayload)
+        const session = await supertest(app).post('/api/sessions').send(user)
+        expect(session.body).toHaveProperty('accessToken')
+        const postedTrip = await supertest(app)
+          .post('/api/trips')
+          .set('Cookie', [`accessToken=${session.body.accessToken}`])
+          .send(tripPayload)
+        const postedTrip2 = await supertest(app)
+          .post('/api/trips')
+          .set('Cookie', [`accessToken=${session.body.accessToken}`])
+          .send(tripPayload)
+        expect(postedTrip.body.user).toBe(postedTrip2.body.user)
+        const { body, statusCode } = await supertest(app)
+          .get('/api/me/trips')
+          .set('Cookie', [`accessToken=${session.body.accessToken}`])
+        expect(statusCode).toEqual(200)
+      })
+    })
+  })
+  describe('/me/trips', () => {
+    it('should return a trip', async () => {
+      await supertest(app).post('/api/users').send(userInputPayload)
+      const session = await supertest(app).post('/api/sessions').send(user)
+      const postedTrip = await supertest(app)
+        .post('/api/trips')
+        .set('Cookie', [`accessToken=${session.body.accessToken}`])
+        .send(tripPayload)
+      const postedTripNode = await supertest(app)
+        .post('/api/trips')
+        .set('Cookie', [`accessToken=${session.body.accessToken}`])
+        .send({ ...tripNodePayload, user: postedTrip.body.user })
+      const { body, statusCode } = await supertest(app)
+        .get('/api/me/trips')
+        .set('Cookie', [`accessToken=${session.body.accessToken}`])
+      expect(statusCode).toEqual(200)
+      expect(body).toBe('array')
+    })
+  })
+  describe('/me/nodes', () => {
+    it('should return a trip', async () => {
+      await supertest(app).post('/api/users').send(userInputPayload)
+      const session = await supertest(app).post('/api/sessions').send(user)
+      expect(session.body).toHaveProperty('accessToken')
+      const trip = await supertest(app)
+        .post('/api/trips')
+        .set('Cookie', [`accessToken=${session.body.accessToken}`])
+        .send(tripPayload)
+      const { body, status } = await supertest(app)
+        .post('/api/tripNodes')
+        .set('Cookie', [`accessToken=${session.body.accessToken}`])
+        .send({ ...tripNodePayload, trip: trip.body.user })
+      expect(status).toEqual(200)
+      // expect(body.trip).toBe(trip.body._id)
+      const nodes = await supertest(app)
+        .get('/api/me/nodes')
+        .set('Cookie', [`accessToken=${session.body.accessToken}`])
+      expect(nodes.status).toBe('array')
+    })
+  })
 })

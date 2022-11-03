@@ -1,17 +1,13 @@
 import { Request, Response } from 'express'
-import {
-  CreateTripInput,
-  UpdateTripInput,
-  GetTripInput,
-  DeleteTripInput,
-  GetTripbyUserInput,
-} from '../schema/trip.schema'
+import { CreateTripInput, UpdateTripInput, GetTripInput, DeleteTripInput } from '../schema/trip.schema'
 import TripModel from '../models/trip.model'
+import TripNodeModel from '../models/tripNode.model'
 import { deleteTrip, findTrip } from '../service/trip.service'
 import log from '../utils/logger'
 
 export async function createTripHandler(req: Request<{}, {}, CreateTripInput['body']>, res: Response) {
   const userId = res.locals.user.user._id
+  log.info(userId, 'userId in createTripHandler')
   const { title, description, origin, destination, schedule } = req.body
   try {
     if (!userId) {
@@ -114,12 +110,17 @@ export async function getTripHandler(req: Request<GetTripInput['params']>, res: 
   }
 }
 
-export async function getTripsByUserHandler(req: Request<GetTripbyUserInput['params']>, res: Response) {
-  const userId = res.locals.user._id
+export async function getTripsByUserHandler(req: Request, res: Response) {
+  const userId = res.locals.user.user._id
+  log.info(userId, 'userId in getTripsByUserHandler')
   try {
     const trips = await TripModel.find({ user: userId })
     return res.status(200).send(trips)
   } catch (error: Error | any) {
     return res.status(500).send({ errors: [{ message: error.message || 'Internal server error' }] })
   }
+}
+
+export async function getNodesbyTripsHandler(req: Request, res: Response) {
+  return res.status(200).send('getNodesbyTripsHandler')
 }

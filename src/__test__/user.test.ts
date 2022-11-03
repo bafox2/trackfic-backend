@@ -9,6 +9,7 @@ import {
   userPayload,
   userInputPayloadWrongConfirm,
   userInputPayloadWrongBody,
+  userInputPayload2,
 } from './testValues.spec'
 
 const app = createServer()
@@ -72,11 +73,6 @@ describe('user model', () => {
         })
       })
     })
-
-    //   //session
-    //   //normal usecase
-    //   //refreshes
-    // })
   })
   describe('/me api route', () => {
     describe('given a valid token', () => {
@@ -88,9 +84,14 @@ describe('user model', () => {
           .get('/api/me')
           .set('Cookie', [`accessToken=${session.body.accessToken}`])
         expect(statusCode).toEqual(200)
-        // const res = await supertest(app).get('/api/me').set('Authorization', `Bearer ${session.body.accessToken}`)
-        // expect(res.statusCode).toEqual(200)
       })
+    })
+  })
+
+  describe('tripNode virtual', () => {
+    it('works from the service', async () => {
+      const user = await UserService.createUser(userInputPayload2)
+      // expect(user.trips).toBe([])
     })
   })
 })

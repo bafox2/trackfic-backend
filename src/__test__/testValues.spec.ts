@@ -4,14 +4,24 @@ export const userInputPayload = {
   password: '123456',
   passwordConfirmation: '123456',
 }
+export const userInputPayload2 = {
+  name: 'Jane1 Doe',
+  email: 'jane1@gmail.com',
+  password: '123456',
+  passwordConfirmation: '123456',
+}
 
 export const user = {
   email: 'jane@gmail.com',
   password: '123456',
 }
-
+export const tripNodePayload = {
+  trip: '635b2c6ee5c19c1cb73c543a',
+  timeRequested: '2021-10-10T00:00:00.000Z',
+  durationGeneral: 1256,
+  durationNow: 1754,
+}
 export const tripPayload = {
-  user: '123',
   title: 'Commute to work',
   description: 'My daily commute to work',
   origin: '6400 hoadly road, Virginia',
