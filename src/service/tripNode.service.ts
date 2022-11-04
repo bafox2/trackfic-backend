@@ -5,11 +5,21 @@ import { FilterQuery, QueryOptions, UpdateQuery } from 'mongoose'
 import log from '../utils/logger'
 
 export async function createTripNode(input: ITripNodeInput) {
-  return TripNodeModel.create(input)
+  try {
+    const tripNode = await TripNodeModel.create(input)
+    return tripNode
+  } catch (err) {
+    log.error(err)
+    throw err
+  }
 }
 
 export async function findTripNode(query: FilterQuery<ITripNodeInput>, options: QueryOptions = { lean: true }) {
   return TripNodeModel.findOne(query, {}, options)
+}
+
+export async function findTripNodes(query: FilterQuery<ITripNodeInput>, options: QueryOptions = { lean: true }) {
+  return TripNodeModel.find(query, {}, options)
 }
 
 export async function findAndUpdateTripNode(

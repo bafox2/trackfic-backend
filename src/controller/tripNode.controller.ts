@@ -21,7 +21,7 @@ export async function createTripNodeHandler(req: Request<{}, {}, CreateTripNodeI
     if (!userId) {
       return res.status(403).send({ message: 'Unauthorized, please log in' })
     }
-    const tripNode = await TripNodeModel.create({ user: userId, trip, timeRequested, durationGeneral, durationNow })
+    const tripNode = await TripNodeModel.create({ trip, timeRequested, durationGeneral, durationNow })
     return res.status(200).send(tripNode)
   } catch (error: any) {
     log.error(error)

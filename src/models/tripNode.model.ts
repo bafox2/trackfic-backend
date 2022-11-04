@@ -13,7 +13,6 @@ export interface ITripNodeInput {
 export interface ITripNode extends ITripNodeInput, mongoose.Document {
   createdAt: Date
   updatedAt: Date
-  user: IUser['_id']
 }
 
 const nodeSchema = new mongoose.Schema(
@@ -33,13 +32,6 @@ const nodeSchema = new mongoose.Schema(
     },
   }
 )
-
-//write a virtual that will retrn the user of the trip
-nodeSchema.virtual('user').get(async function () {
-  const trip: ITrip | null = await TripModel.findById(this.trip)
-  //take the promise and turn it into a user
-  return trip?.user
-})
 
 const TripNodeModel = mongoose.model<ITripNode>('Node', nodeSchema)
 

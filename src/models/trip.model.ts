@@ -2,6 +2,7 @@ import mongoose from 'mongoose'
 import { IUser } from './user.model'
 import { CronJob } from 'cron'
 import TripNodeModel, { ITripNode, ITripNodeInput } from './tripNode.model'
+import { createTripNode } from '../service/tripNode.service'
 import log from '../utils/logger'
 import config from 'config'
 
@@ -32,6 +33,42 @@ const tripSchema = new mongoose.Schema(
     timestamps: true,
   }
 )
+//can possibly do a property of the trip for pause/start
+//as long as there is only one instance of the cronjob running at a time, it will work
+//this won't work because it is always going to be a new instance, and started
+// let job: CronJob
+// tripSchema.pre('save', function () {
+//   if (this.isNew) {
+//     job = new CronJob(this.schedule, () => {
+//       log.info('tripNode should have been created')
+//       const tripNode = createTripNode({
+//         trip: this._id,
+//         timeRequested: new Date().toISOString(),
+//         durationGeneral: 0,
+//         durationNow: 0,
+//       })
+//     })
+//     job.start()
+//   }
+// })
+
+// tripSchema.post('save', function () {
+//   job.stop()
+// })
+
+// tripSchema.post('save' as any, async function (next) {
+//   const trip = this._id as ITrip['_id']
+//   log.info('trip pre save hook')
+//   new CronJob('* * * * * *', async function () {
+//     log.info('cron job running')
+//     await createTripNode({
+//       trip: trip,
+//       timeRequested: new Date().toISOString(),
+//       durationGeneral: 0,
+//       durationNow: 0,
+//     })
+//   }).start()
+// })
 
 // tripSchema.pre('save' as any, async function (next): Promise<void> {
 //   await fetch(
