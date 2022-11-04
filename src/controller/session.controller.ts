@@ -29,7 +29,7 @@ export async function createUserSessionHandler(req: Request, res: Response) {
     secure: false,
   })
 
-  res.cookie('refrershToken', refreshToken, {
+  res.cookie('refreshToken', refreshToken, {
     maxAge: config.get('refreshTokenTtlMs'),
     httpOnly: true,
     domain: config.get('domain'),
@@ -49,5 +49,7 @@ export async function getUserSessionsHandler(req: Request, res: Response) {
 export async function deleteSessionHandler(req: Request, res: Response) {
   const sessionId = res.locals.user.session
   await updateSession({ _id: sessionId }, { valid: false })
+  res.clearCookie('accessToken')
+  res.clearCookie('refreshToken')
   return res.send({ accessToken: null, refreshToken: null })
 }
