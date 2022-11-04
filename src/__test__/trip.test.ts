@@ -5,7 +5,7 @@ import mongoose from 'mongoose'
 import { createTrip } from '../service/trip.service'
 import { omit } from 'lodash'
 import { userInputPayload, user, tripPayload, tripDataMongoose, tripNodePayload } from './testValues.spec'
-import exp from 'constants'
+import { diff } from 'jest-diff'
 
 const app = createServer()
 
@@ -113,28 +113,39 @@ describe('trip', () => {
         .get('/api/me/trips')
         .set('Cookie', [`accessToken=${session.body.accessToken}`])
       expect(statusCode).toEqual(200)
-      expect(body).toBe('array')
+      expect(body[2]).toHaveProperty('origin')
     })
   })
   describe('/me/nodes', () => {
     it('should return a trip', async () => {
+      //creates user
       await supertest(app).post('/api/users').send(userInputPayload)
+      //creates session
       const session = await supertest(app).post('/api/sessions').send(user)
       expect(session.body).toHaveProperty('accessToken')
+      //creates trip
       const trip = await supertest(app)
         .post('/api/trips')
         .set('Cookie', [`accessToken=${session.body.accessToken}`])
-        .send(tripPayload)
+        .send({ ...tripPayload, user: session.body.user })
+      expect(trip.body).toHaveProperty('user')
+      //creates tripNode
       const { body, status } = await supertest(app)
         .post('/api/tripNodes')
         .set('Cookie', [`accessToken=${session.body.accessToken}`])
-        .send({ ...tripNodePayload, trip: trip.body.user })
+        .send({ ...tripNodePayload, trip: trip.body._id })
+      await supertest(app)
+        .post('/api/tripNodes')
+        .set('Cookie', [`accessToken=${session.body.accessToken}`])
+        .send({ ...tripNodePayload, trip: trip.body._id })
+      //user isn't there
       expect(status).toEqual(200)
       // expect(body.trip).toBe(trip.body._id)
       const nodes = await supertest(app)
         .get('/api/me/nodes')
         .set('Cookie', [`accessToken=${session.body.accessToken}`])
-      expect(nodes.status).toBe('array')
+      expect(nodes.status).toBe(200)
+      expect(nodes.body[4]).toHaveProperty('tripNodes')
     })
   })
 })

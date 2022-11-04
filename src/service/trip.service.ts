@@ -9,6 +9,10 @@ export async function findTrip(query: FilterQuery<ITrip>, options: QueryOptions 
   return TripModel.findOne(query, {}, options)
 }
 
+export async function findTrips(query: FilterQuery<ITrip>, options: QueryOptions = { lean: true }) {
+  return TripModel.find(query, {}, options)
+}
+
 export async function findAndUpdateTrip(query: FilterQuery<ITrip>, update: UpdateQuery<ITrip>, options: QueryOptions) {
   return TripModel.findOneAndUpdate(query, update, options)
 }
