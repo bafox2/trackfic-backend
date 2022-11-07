@@ -5,7 +5,13 @@ import validate from './middleware/validate'
 import { createSessionSchema } from './schema/session.schema'
 import { createUserSchema } from './schema/user.schema'
 import requireUser from './middleware/requireUser'
-import { createTripSchema, updateTripSchema, deleteTripSchema, getTripSchema } from './schema/trip.schema'
+import {
+  createTripSchema,
+  updateTripSchema,
+  deleteTripSchema,
+  getTripSchema,
+  pauseTripSchema,
+} from './schema/trip.schema'
 import {
   createTripHandler,
   updateTripHandler,
@@ -13,6 +19,7 @@ import {
   deleteTripHandler,
   getTripsByUserHandler,
   getNodesbyTripsHandler,
+  pauseTripHandler,
 } from './controller/trip.controller'
 import {
   createTripNodeHandler,
@@ -37,6 +44,7 @@ function routes(app: Express) {
   app.get('/api/trips/:tripId', validate(getTripSchema), getTripHandler)
   app.post('/api/trips', [requireUser, validate(createTripSchema)], createTripHandler)
   app.put('/api/trips/:tripId', [requireUser, validate(updateTripSchema)], updateTripHandler)
+  app.put('/api/trips/:tripId/pause', [requireUser, validate(pauseTripSchema)], pauseTripHandler)
   app.delete('/api/trips/:tripId', [requireUser, validate(deleteTripSchema)], deleteTripHandler)
 
   app.get('/api/me', requireUser, getCurrentUser)

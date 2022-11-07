@@ -49,6 +49,7 @@ export const userInputPayloadWrongBody = {
 export const tripDataMongoose = {
   __v: 0,
   _id: expect.any(String),
+  active: expect.any(Boolean),
   title: 'Commute to work',
   description: 'My daily commute to work',
   origin: '6400 hoadly road, Virginia',

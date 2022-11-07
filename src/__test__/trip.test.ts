@@ -64,6 +64,24 @@ describe('trip', () => {
   })
 
   describe('update trip route', () => {})
+  describe('pause the trip with everything working out', () => {
+    it('should return a 200 and the trip', async () => {
+      await supertest(app).post('/api/users').send(userInputPayload)
+      const session = await supertest(app).post('/api/sessions').send(user)
+      expect(session.body).toHaveProperty('accessToken')
+      //this trip is posted with a different user _id than the one in the session
+      const postedTrip = await supertest(app)
+        .post('/api/trips')
+        .set('Cookie', [`accessToken=${session.body.accessToken}`])
+        .send(tripPayload)
+
+      //the user here is not the same as the user in the tripPayload
+      const { body, status } = await supertest(app)
+        .put(`/api/trips/${postedTrip.body._id}/pause`)
+        .set('Cookie', [`accessToken=${session.body.accessToken}`])
+      expect(body.active).toBe(false)
+    })
+  })
 
   describe('delete trip route', () => {})
 

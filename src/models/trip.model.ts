@@ -18,6 +18,7 @@ export interface ITripInput {
 export interface ITrip extends ITripInput, mongoose.Document {
   createdAt: Date
   updatedAt: Date
+  active: boolean
 }
 
 const tripSchema = new mongoose.Schema(
@@ -28,11 +29,27 @@ const tripSchema = new mongoose.Schema(
     origin: { type: String, required: true },
     destination: { type: String, required: true },
     schedule: { type: String, required: true },
+    active: { type: Boolean, required: true, default: true },
   },
   {
     timestamps: true,
   }
 )
+
+// var job = new CronJob(
+//   '0-59 0-59 0-23 * * 0-6',
+//   function () {
+//     console.log('CRON is started !' + user.email)
+//   },
+//   function () {
+//     /* This function is executed when the job stops */
+//     console.log('CRON is stoped !')
+//   },
+//   true /* Start the job right now */
+// )
+
+// job.stop
+
 //can possibly do a property of the trip for pause/start
 //as long as there is only one instance of the cronjob running at a time, it will work
 //this won't work because it is always going to be a new instance, and started
@@ -52,10 +69,6 @@ const tripSchema = new mongoose.Schema(
 //   }
 // })
 
-// tripSchema.post('save', function () {
-//   job.stop()
-// })
-
 // tripSchema.post('save' as any, async function (next) {
 //   const trip = this._id as ITrip['_id']
 //   log.info('trip pre save hook')
@@ -68,26 +81,6 @@ const tripSchema = new mongoose.Schema(
 //       durationNow: 0,
 //     })
 //   }).start()
-// })
-
-// tripSchema.pre('save' as any, async function (next): Promise<void> {
-//   await fetch(
-//     `https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins=${this.origin}&destinations=${this.destination}mode=driving&departure_time=now&key=AIzaSyDQaQ22jPs4WUnCh7Fp9kMdYOl1METK2GU&departure_time=now`
-//   )
-//     .then((res) => res.json())
-//     .then((data) => {
-//       console.log(data)
-//       const node: ITripNodeInput = {
-//         user: this.user,
-//         trip: this._id,
-//         date: new Date(),
-//         time: new Date().toLocaleTimeString(),
-//         durationGeneral: data.rows[0].elements[0].duration.value,
-//         durationNow: data.rows[0].elements[0].duration_in_traffic.value,
-//       }
-//       //the line below is not working
-//       TripNodeModel.create(node)
-//     })
 // })
 
 // tripSchema.post('save' as any, async function (next): Promise<void> {
@@ -113,8 +106,6 @@ const tripSchema = new mongoose.Schema(
 //   })
 //   job.start()
 // })
-
-//if i make the cronjob change each time the model is saved, i don't need to access the cronjob itself
 
 const TripModel = mongoose.model<ITrip>('Trip', tripSchema)
 
