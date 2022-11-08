@@ -26,7 +26,7 @@ export const tripPayload = {
   description: 'My daily commute to work',
   origin: '6400 hoadly road, Virginia',
   destination: 'Hidden Spring Dr. Manassas, VA',
-  schedule: '* * * * *',
+  schedule: '* 5 * 7 4 2',
 }
 export const userPayload = {
   _id: 1,
@@ -54,7 +54,7 @@ export const tripDataMongoose = {
   description: 'My daily commute to work',
   origin: '6400 hoadly road, Virginia',
   destination: 'Hidden Spring Dr. Manassas, VA',
-  schedule: '* * * * *',
+  schedule: '* 5 * 7 4 2',
   createdAt: expect.any(String),
   updatedAt: expect.any(String),
   user: expect.any(String),

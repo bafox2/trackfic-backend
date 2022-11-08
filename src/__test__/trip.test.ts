@@ -63,7 +63,36 @@ describe('trip', () => {
     })
   })
 
-  describe('update trip route', () => {})
+  describe('update trip route', () => {
+    describe('given the user is not logged in', () => {
+      it('should return a 401', async () => {
+        const obj = await supertest(app).put(`/api/trips/123`)
+        expect(obj.status).toEqual(401)
+      })
+    })
+
+    describe('given the user is logged in', () => {
+      it('should return a 200 and the trip', async () => {
+        const userCreated = await supertest(app).post('/api/users').send(userInputPayload)
+        const session = await supertest(app).post('/api/sessions').send(user)
+        expect(session.body).toHaveProperty('accessToken')
+        const postedTrip = await supertest(app)
+          .post('/api/trips')
+          .set('Cookie', [`accessToken=${session.body.accessToken}`])
+          .send(tripPayload)
+        const { body, status } = await supertest(app)
+          .put(`/api/trips/${postedTrip.body._id}`)
+          .set('Cookie', [`accessToken=${session.body.accessToken}`])
+          .send({
+            ...tripPayload,
+            title: 'new title',
+          })
+        expect(body).toEqual({ ...tripDataMongoose, title: 'new title' })
+        expect(status).toEqual(200)
+      })
+    })
+  })
+
   describe('pause the trip with everything working out', () => {
     it('should return a 200 and the trip', async () => {
       await supertest(app).post('/api/users').send(userInputPayload)

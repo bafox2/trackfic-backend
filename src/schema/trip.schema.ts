@@ -13,7 +13,7 @@ const payload = {
       required_error: 'Destination is required',
     }),
     schedule: string({
-      required_error: 'Destination is required',
+      required_error: 'Schedule is required',
     }),
   }),
 }

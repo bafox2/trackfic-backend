@@ -22,11 +22,11 @@ export async function createTripHandler(req: Request<{}, {}, CreateTripInput['bo
 }
 
 export async function updateTripHandler(req: Request<UpdateTripInput['params']>, res: Response) {
-  const userId = res.locals.user._id
+  const userId = res.locals.user.user._id
   const tripId = req.params.tripId
   const update = req.body
   try {
-    const trip = await findTrip({ userId, tripId })
+    const trip = await findTrip({ _id: tripId })
     if (!trip) {
       return res.status(404).send({
         errors: [
@@ -36,7 +36,7 @@ export async function updateTripHandler(req: Request<UpdateTripInput['params']>,
         ],
       })
     }
-    if (trip.user.toString() !== userId.toString()) {
+    if (trip.user._id.toString() !== userId) {
       return res.status(403).send({
         errors: [
           {
