@@ -14,7 +14,7 @@ WORKDIR /src
 RUN npm run build
 #copy the config folder to be in the same folder as the app.js
 RUN ls
-RUN cp -a /src/config /build/config
+RUN cd /build && ls
 
 
 CMD ["node", "./build/src/app.js"]
