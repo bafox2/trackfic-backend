@@ -14,13 +14,13 @@ import { findUser } from '../service/user.service'
 import log from '../utils/logger'
 
 export async function createTripNodeHandler(req: Request<{}, {}, CreateTripNodeInput['body']>, res: Response) {
-  const userId = res.locals.user.user._id
-  log.info(userId, 'userId in createTripNodeHandler')
+  // const userId = res.locals.user.user._id
+  // log.info(userId, 'userId in createTripNodeHandler')
   const { trip, timeRequested, durationGeneral, durationNow } = req.body
   try {
-    if (!userId) {
-      return res.status(403).send({ message: 'Unauthorized, please log in' })
-    }
+    // if (!userId) {
+    //   return res.status(403).send({ message: 'Unauthorized, please log in' })
+    // }
     const tripNode = await TripNodeModel.create({ trip, timeRequested, durationGeneral, durationNow })
     return res.status(200).send(tripNode)
   } catch (error: any) {

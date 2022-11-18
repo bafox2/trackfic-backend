@@ -7,7 +7,10 @@ const requireUser = (req: Request, res: Response, next: NextFunction) => {
     return res.status(401).send({
       errors: [
         {
-          message: 'Unauthorized',
+          message: `You're not authorized to access this route, ${req.originalUrl}`,
+          req: req.originalUrl,
+          res: res.locals,
+          cookies: req.cookies,
         },
       ],
     })

@@ -33,79 +33,67 @@ const tripSchema = new mongoose.Schema(
   },
   {
     timestamps: true,
+    toObject: {
+      virtuals: true,
+    },
   }
 )
 
-// var job = new CronJob(
-//   '0-59 0-59 0-23 * * 0-6',
-//   function () {
-//     console.log('CRON is started !' + user.email)
-//   },
-//   function () {
-//     /* This function is executed when the job stops */
-//     console.log('CRON is stoped !')
-//   },
-//   true /* Start the job right now */
-// )
+let job = new CronJob(
+  '0 0 0 * * *',
+  async () => {
+    log.info('running cron job')
+  },
+  null,
+  true,
+  config.get('timezone')
+)
 
-// job.stop
+tripSchema.virtual('nextTick').get(function () {
+  // could generate a whole job and then ONLY return the nextDate() method
+  return job.nextDate()
+})
 
-//can possibly do a property of the trip for pause/start
-//as long as there is only one instance of the cronjob running at a time, it will work
-//this won't work because it is always going to be a new instance, and started
-// let job: CronJob
-// tripSchema.pre('save', function () {
-//   if (this.isNew) {
-//     job = new CronJob(this.schedule, () => {
-//       log.info('tripNode should have been created')
-//       const tripNode = createTripNode({
-//         trip: this._id,
-//         timeRequested: new Date().toISOString(),
-//         durationGeneral: 0,
-//         durationNow: 0,
-//       })
-//     })
-//     job.start()
-//   }
-// })
+// attempting to edit a singular cronjob
+tripSchema.post('save' as any, async function () {
+  const trip = this as ITrip
+  if (job) {
+    job.stop()
+  }
+  log.info(`trip ${this._id} has been saved and is ${trip.active}`)
 
-// tripSchema.post('save' as any, async function (next) {
-//   const trip = this._id as ITrip['_id']
-//   log.info('trip pre save hook')
-//   new CronJob('* * * * * *', async function () {
-//     log.info('cron job running')
-//     await createTripNode({
-//       trip: trip,
-//       timeRequested: new Date().toISOString(),
-//       durationGeneral: 0,
-//       durationNow: 0,
-//     })
-//   }).start()
-// })
+  if (trip.origin && trip.destination && trip.schedule) {
+    job = new CronJob(trip.schedule, async function () {
+      log.info(`starting at ${trip.origin} and ending at ${trip.destination}`)
 
-// tripSchema.post('save' as any, async function (next): Promise<void> {
-//   const job = new CronJob(this.schedule, async () => {
-//     await fetch(
-//       `https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins=${this.origin}&destinations=${this.destination}mode=driving&departure_time=now&key=errorAIzaSyDQaQ22jPs4WUnCh7Fp9kMdYOl1METK2GU&departure_time=now`
-//     )
-//       .then((res) => res.json())
-
-//       .then((data) => {
-//         console.log(data)
-//         const node: ITripNodeInput = {
-//           user: this.user,
-//           trip: this._id,
-//           date: new Date(),
-//           time: new Date().toLocaleTimeString(),
-//           durationGeneral: data.rows[0].elements[0].duration.value,
-//           durationNow: data.rows[0].elements[0].duration_in_traffic.value,
-//         }
-//         //the line below is not working
-//         TripNodeModel.create(node)
-//       })
-//   })
-//   job.start()
-// })
+      await fetch(
+        `https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins=${trip.origin}&destinations=${
+          trip.destination
+        }mode=driving&departure_time=now&key=${config.get('googleAPIKey')}&departure_time=now`
+      )
+        .then((res) => res.json())
+        .then((data) => {
+          console.log(data)
+          const node: ITripNodeInput = {
+            trip: trip._id,
+            timeRequested: new Date().toLocaleTimeString(),
+            durationGeneral: data.rows[0].elements[0].duration.value,
+            durationNow: data.rows[0].elements[0].duration_in_traffic.value,
+          }
+          createTripNode(node)
+        })
+      log.info(`trip ${trip._id} has created a new node`)
+    })
+    if (!this.active) {
+      log.info('stopping cron job')
+      job.stop()
+    }
+    if (this.active) {
+      log.info('starting cron job')
+      job.start()
+    }
+  }
+})
 
 const TripModel = mongoose.model<ITrip>('Trip', tripSchema)
 

@@ -6,13 +6,20 @@ import log from '../utils/logger'
 
 export async function createTripHandler(req: Request<{}, {}, CreateTripInput['body']>, res: Response) {
   const userId = res.locals.user.user._id
-  log.info(userId, 'userId in createTripHandler')
   const { title, description, origin, destination, schedule } = req.body
   try {
     if (!userId) {
       return res.status(403).send({ message: 'Unauthorized, please log in' })
     }
-    const trip = await TripModel.create({ user: userId, title, description, origin, destination, schedule })
+    const trip = await TripModel.create({
+      user: userId,
+      title,
+      description,
+      origin,
+      destination,
+      schedule,
+      active: true,
+    })
 
     return res.status(200).send(trip)
   } catch (error: any) {
@@ -26,7 +33,7 @@ export async function updateTripHandler(req: Request<UpdateTripInput['params']>,
   const tripId = req.params.tripId
   const update = req.body
   try {
-    const trip = await findTrip({ _id: tripId })
+    const trip = await TripModel.findOne({ _id: tripId })
     if (!trip) {
       return res.status(404).send({
         errors: [
@@ -45,8 +52,9 @@ export async function updateTripHandler(req: Request<UpdateTripInput['params']>,
         ],
       })
     }
-    const updatedTrip = await TripModel.findOneAndUpdate({ _id: tripId }, update, { new: true })
-    return res.status(200).send(updatedTrip)
+    await trip.updateOne(update)
+    await trip.save()
+    return res.status(200).send(trip)
   } catch (error: Error | any) {
     return res.status(500).send({ errors: [{ message: error.message || 'Internal server error' }] })
   }
@@ -56,7 +64,7 @@ export async function pauseTripHandler(req: Request<PauseTripInput['params']>, r
   const userId = res.locals.user.user._id
   const tripId = req.params.tripId
   try {
-    const trip = await findTrip({ _id: tripId })
+    const trip = await TripModel.findOne({ _id: tripId })
     if (!trip) {
       return res.status(404).send({
         errors: [
@@ -77,83 +85,18 @@ export async function pauseTripHandler(req: Request<PauseTripInput['params']>, r
         ],
       })
     }
-    const updatedTrip = await TripModel.findOneAndUpdate({ _id: tripId }, { active: !trip.active }, { new: true })
-    return res.status(200).send(updatedTrip)
+
+    await trip.updateOne({ active: !trip.active }, { new: true })
+    await trip.save()
+    log.info(trip.active)
+    return res.status(200).send(trip)
   } catch (error: Error | any) {
     return res.status(500).send({ errors: [{ message: error.message || 'Internal server error' }] })
   }
 }
 
-// let bodymessage = {
-//   errors: [
-//     {
-//       message: 'Not authorized to update this trip',
-//       tripUser: {
-//         __v: 0,
-//         _id: '63690449e49965e95270254d',
-//         active: true,
-//         createdAt: '2022-11-07T13:12:41.749Z',
-//         description: 'My daily commute to work',
-//         destination: 'Hidden Spring Dr. Manassas, VA',
-//         origin: '6400 hoadly road, Virginia',
-//         schedule: '* * * * *',
-//         title: 'Commute to work',
-//         updatedAt: '2022-11-07T13:12:41.749Z',
-//         user: '63690449e49965e952702549',
-//       },
-//       user: {
-//         user: {
-//           exp: 1667827662,
-//           iat: 1667826762,
-//           session: {
-//             __v: 0,
-//             _id: '6369044ae49965e95270255a',
-//             createdAt: '2022-11-07T13:12:42.050Z',
-//             updatedAt: '2022-11-07T13:12:42.050Z',
-//             user: '63690449e49965e952702550',
-//             userAgent: '',
-//             valid: true,
-//           },
-//           user: {
-//             __v: 0,
-//             _id: '63690449e49965e952702550',
-//             createdAt: '2022-11-07T13:12:41.791Z',
-//             email: 'jane@gmail.com',
-//             id: '63690449e49965e952702550',
-//             name: 'Jane Doe',
-//             password: '$2b$10$zG6VzgeKG0xn4ewufJSpFeymfrn/04kdgBDErXP5xo8.9vPNbUidS',
-//             updatedAt: '2022-11-07T13:12:41.791Z',
-//           },
-//         },
-//       },
-//     },
-//   ],
-// }
-// let treslocal = user: {
-//   "user": {
-//     "_id": "63690449e49965e952702550",
-//     "email": "jane@gmail.com",
-//     "password": "$2b$10$zG6VzgeKG0xn4ewufJSpFeymfrn/04kdgBDErXP5xo8.9vPNbUidS",
-//     "name": "Jane Doe",
-//     "createdAt": "2022-11-07T13:12:41.791Z",
-//     "updatedAt": "2022-11-07T13:12:41.791Z",
-//     "__v": 0,
-//     "id": "63690449e49965e952702550"
-//       },
-//   "session": {
-//     "user": "63690449e49965e952702550",
-//     "valid": true,
-//     "userAgent": "",
-//     "_id": "6369044ae49965e952702574",
-//     "createdAt": "2022-11-07T13:12:42.537Z",
-//     "updatedAt": "2022-11-07T13:12:42.537Z",
-//     "__v": 0
-//       },
-//   "iat": 1667826762,
-// }
-
 export async function deleteTripHandler(req: Request<DeleteTripInput['params']>, res: Response) {
-  const userId = res.locals.user._id
+  const userId = res.locals.user.user._id
   const tripId = req.params.tripId
   try {
     const trip = await findTrip({ userId, tripId })
@@ -185,7 +128,7 @@ export async function deleteTripHandler(req: Request<DeleteTripInput['params']>,
       })
     }
     await deleteTrip({ userId, tripId })
-    return res.status(200)
+    return res.status(200).send({ message: 'Trip deleted' })
   } catch (error: Error | any) {
     return res.status(500).send({ errors: [{ message: error.message || 'Internal server error' }] })
   }

@@ -23,6 +23,7 @@ export async function createUserHandler(req: Request<{}, {}, CreateUserInput['bo
 export async function getCurrentUser(req: Request, res: Response) {
   try {
     const user = res.locals.user
+    log.info(user, 'user')
     return res.send(user)
   } catch (error: any) {
     log.error(error)

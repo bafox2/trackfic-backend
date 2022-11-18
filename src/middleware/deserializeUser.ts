@@ -12,11 +12,15 @@ async function deserializeUser(req: Request, res: Response, next: NextFunction) 
   if (!accessToken) {
     return next()
   }
-  if (accessToken && refreshToken) {
-  }
+
   const { decoded, expired } = verifyJwt(accessToken)
   if (decoded) {
     res.locals.user = decoded
+    if (Object.keys(decoded).length === 0) {
+      log.info('user is empty')
+      return next()
+    }
+
     return next()
   }
   if (expired && refreshToken) {

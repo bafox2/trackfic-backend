@@ -3,8 +3,8 @@ import config from 'config'
 import log from './logger'
 
 //signing and verifying tokens
-const publicKey = config.get<string>('publicKey')
-const privateKey = config.get<string>('privateKey')
+const publicKey = Buffer.from(config.get<string>('publicKeyEncoded'), 'base64').toString('ascii')
+const privateKey = Buffer.from(config.get<string>('privateKeyEncoded'), 'base64').toString('ascii')
 
 export function signJwt(object: Object, options?: jwt.SignOptions | undefined) {
   try {
