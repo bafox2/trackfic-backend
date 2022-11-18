@@ -15,7 +15,7 @@ WORKDIR /src
 RUN npm run build
 #config folder is in /build/config AND in /config
 #we need config to be in /src/config
-RUN cp -a /config build/src/
+RUN cp -a config build/src/
 
 CMD ["node", "./build/src/app.js"]
 
