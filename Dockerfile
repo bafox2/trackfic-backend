@@ -12,4 +12,4 @@ RUN rm -rf /src/node_modules && cp -a /tmp/node_modules /src/
 WORKDIR /src
 RUN npm run build
 
-CMD ["node", "build/src/app.js"]
+CMD ["node", "/app.js"]
