@@ -21,4 +21,4 @@ RUN ls
 RUN pwd -P
 RUN cd ./build && ls
 
-CMD ["node", "./app.js"]
+CMD ["node", "./src/app.js"]
