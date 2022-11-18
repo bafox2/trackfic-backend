@@ -12,9 +12,10 @@ RUN rm -rf /src/node_modules && cp -a /tmp/node_modules /src/
 
 WORKDIR /src
 RUN npm run build
-RUN cd ./build && ls
 #copy the config folder to /build/src
-RUN cp -r /src/config /src/build/src
+RUN cp -r /build/config /build/src
+RUN cd ./build && ls
+RUN cd ./src && ls
 
 CMD ["node", "./build/src/app.js"]
 
