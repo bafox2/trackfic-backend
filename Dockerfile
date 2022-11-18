@@ -1,5 +1,6 @@
 #app file is /build/src/app.js
-#config folder is in /build/config
+#config folder is in /build/config AND in /config
+#we need config to be in /src/config
 
 FROM node:14
 ADD package.json /tmp/package.json
@@ -12,11 +13,9 @@ RUN rm -rf /src/node_modules && cp -a /tmp/node_modules /src/
 
 WORKDIR /src
 RUN npm run build
-#copy the config folder to be in the same folder as the app.js
-RUN cd config && ls
-RUN cd ..
-RUN cd build/config && ls
-
+#config folder is in /build/config AND in /config
+#we need config to be in /src/config
+RUN cp -a /config build/src/
 
 CMD ["node", "./build/src/app.js"]
 
