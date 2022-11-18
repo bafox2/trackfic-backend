@@ -1,3 +1,6 @@
+#app file is /build/src/app.js
+#config folder is in /build/config
+
 FROM node:14
 ADD package.json /tmp/package.json
 ADD package-lock.json /tmp/package-lock.json
@@ -10,5 +13,8 @@ RUN rm -rf /src/node_modules && cp -a /tmp/node_modules /src/
 WORKDIR /src
 RUN npm run build
 RUN cd ./build && ls
+#copy the config folder to /build/src
+RUN cp -r /src/config /src/build/src
 
 CMD ["node", "./build/src/app.js"]
+
