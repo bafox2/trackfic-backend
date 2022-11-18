@@ -3,6 +3,7 @@ FROM node:14
 ADD package.json /tmp/package.json
 ADD package-lock.json /tmp/package-lock.json
 RUN ls
+RUN pwd -P
 
 RUN rm -rf build
 RUN cd /tmp && npm install
