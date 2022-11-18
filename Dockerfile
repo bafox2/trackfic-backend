@@ -20,4 +20,4 @@ RUN npm run build
 RUN ls
 RUN pwd -P
 
-CMD ["node", "./build/src/app.js"]
+CMD ["node", "./app.js"]
