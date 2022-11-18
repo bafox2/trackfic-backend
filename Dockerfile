@@ -15,6 +15,6 @@ RUN ls
 WORKDIR /src
 RUN npm run build
 RUN ls
-RUN pwd
+RUN pwd -P
 
 CMD ["node", "/build/src/app.js"]
