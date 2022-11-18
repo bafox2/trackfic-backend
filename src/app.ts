@@ -4,6 +4,7 @@ import log from './utils/logger'
 import createServer from './utils/server'
 import dotenv from 'dotenv'
 dotenv.config()
+process.env.NODE_CONFIG_DIR = './config'
 
 const port = config.get<number>('port')
 const app = createServer()

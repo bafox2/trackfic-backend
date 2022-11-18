@@ -12,4 +12,5 @@ export default {
   refreshTokenTtlMs: 'REFRESH_TOKEN_TTL_MS',
   timezone: 'TIMEZONE',
   mapsAPI: 'MAPS_API',
+  nodeConfigDir: 'NODE_CONFIG_DIR',
 };
