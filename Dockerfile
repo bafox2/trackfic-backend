@@ -13,8 +13,9 @@ RUN rm -rf /src/node_modules && cp -a /tmp/node_modules /src/
 WORKDIR /src
 RUN npm run build
 #copy the config folder to be in the same folder as the app.js
-RUN ls
-RUN cd build && ls
+RUN cd config && ls
+RUN cd ..
+RUN cd build/config && ls
 
 
 CMD ["node", "./build/src/app.js"]
