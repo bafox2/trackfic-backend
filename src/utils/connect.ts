@@ -9,6 +9,8 @@ async function connect() {
     log.info('db connected')
   } catch (error) {
     log.error('unable to connect')
+    log.error(error)
+    log.error(JSON.stringify(error))
     process.exit(1)
   }
 }
