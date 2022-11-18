@@ -1,9 +1,9 @@
-import config from 'config'
 import connect from './utils/connect'
 import log from './utils/logger'
 import createServer from './utils/server'
 import dotenv from 'dotenv'
 dotenv.config()
+import config from 'config'
 process.env.NODE_CONFIG_DIR = './config'
 
 const port = config.get<number>('port')
