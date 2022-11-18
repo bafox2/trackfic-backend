@@ -10,7 +10,7 @@ import createServer from './utils/server'
 
 const port = config.get<number>('port')
 const app = createServer()
-log.info(`this is process.env ${process.env}`)
+log.info(`this is process.env ${JSON.stringify(process.env)}`)
 log.info('Starting server')
 
 app.listen(port, async () => {
