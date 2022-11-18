@@ -1,5 +1,7 @@
 FROM node:14
 
+
+RUN pwd -P
 ADD package.json /tmp/package.json
 ADD package-lock.json /tmp/package-lock.json
 RUN ls
