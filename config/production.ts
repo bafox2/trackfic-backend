@@ -10,7 +10,7 @@ export default {
   refreshTokenTtl: 'REFRESH_TOKEN_TTL',
   accessTokenTtlMs: 'ACCESS_TOKEN_TTL_MS',
   refreshTokenTtlMs: 'REFRESH_TOKEN_TTL_MS',
-  timezone: 'TIMEZONE',
+  timezone: 'America/New_York',
   mapsAPI: 'MAPS_API',
   nodeConfigDir: 'NODE_CONFIG_DIR',
 }
