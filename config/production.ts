@@ -13,4 +13,5 @@ export default {
   timezone: 'America/New_York',
   mapsAPI: 'MAPS_API',
   nodeConfigDir: 'NODE_CONFIG_DIR',
+  clientUrl: 'CLIENT_URL',
 }
