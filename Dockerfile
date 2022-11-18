@@ -16,4 +16,5 @@ WORKDIR /src
 RUN npm run build
 RUN ls
 
+CMD ["ls"]
 CMD ["node", "/build/src/app.js"]
