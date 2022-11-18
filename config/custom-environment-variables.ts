@@ -13,4 +13,5 @@ export default {
   timezone: 'TIMEZONE',
   mapsAPI: 'MAPS_API',
   nodeConfigDir: 'NODE_CONFIG_DIR',
+  clientUrl: 'CLIENT_URL',
 };
