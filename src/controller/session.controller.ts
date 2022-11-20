@@ -26,7 +26,6 @@ export async function createUserSessionHandler(req: Request, res: Response) {
     maxAge: config.get('accessTokenTtlMs'),
     httpOnly: true,
     domain: config.get('domain'),
-    path: 'api/sessions',
     sameSite: 'strict',
     secure: false,
   })
@@ -35,7 +34,6 @@ export async function createUserSessionHandler(req: Request, res: Response) {
     maxAge: config.get('refreshTokenTtlMs'),
     httpOnly: true,
     domain: config.get('domain'),
-    path: 'api/sessions',
     sameSite: 'strict',
     secure: false,
   })
