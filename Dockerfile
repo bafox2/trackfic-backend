@@ -13,6 +13,10 @@ RUN rm -rf /src/node_modules && cp -a /tmp/node_modules /src/
 
 WORKDIR /src
 RUN npm run build
+#check if there is an env file in the ./build foler
+
+
+
 #config folder is in /build/config AND in /config
 #we need config to be in /src/config
 # RUN cp -a config build/src/
