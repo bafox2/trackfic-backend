@@ -6,6 +6,7 @@ import config from 'config'
 import log from '../utils/logger'
 
 export async function createUserSessionHandler(req: Request, res: Response) {
+  log.info(config.get('clientUrl'), 'config.get(clientUrl)')
   const user = await validatePassword(req.body)
   if (!user) {
     return res.status(401).send({
