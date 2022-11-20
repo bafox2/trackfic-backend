@@ -49,7 +49,9 @@ const UserSchema = new Schema(
 
 UserSchema.pre('save' as any, async function (next): Promise<void> {
   try {
-    const salt = await bcrypt.genSalt(config.get('saltWorkFactor'))
+    //check if config.get('saltWorkFactor') is a string and convert it to a number
+
+    const salt = await bcrypt.genSalt(parseInt(config.get('saltWorkFactor')))
     const hash = await bcrypt.hash(this.password, salt)
     this.password = hash
     return next()
