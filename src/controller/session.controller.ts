@@ -25,8 +25,7 @@ export async function createUserSessionHandler(req: Request, res: Response) {
   res.cookie('accessToken', accessToken, {
     maxAge: config.get('accessTokenTtlMs'),
     httpOnly: true,
-    // @ts-ignore
-    domain: `${config.get('clientUrl').slice(8)}`,
+    domain: config.get('domain'),
     path: 'api/sessions',
     sameSite: 'strict',
     secure: false,
@@ -35,8 +34,7 @@ export async function createUserSessionHandler(req: Request, res: Response) {
   res.cookie('refreshToken', refreshToken, {
     maxAge: config.get('refreshTokenTtlMs'),
     httpOnly: true,
-    // @ts-ignore
-    domain: `${config.get('clientUrl').slice(8)}`,
+    domain: config.get('domain'),
     path: 'api/sessions',
     sameSite: 'strict',
     secure: false,
