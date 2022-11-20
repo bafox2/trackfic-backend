@@ -7,7 +7,6 @@ import cookieParser from 'cookie-parser'
 console.log(process.env.clientUrl, 'process.env.clientUrl')
 console.log(config.get('clientUrl'), 'config.get(clientUrl)')
 console.log(process.env.CLIENT_URL, 'process.env.CLIENT_URL')
-console.log(config.get('CLIENT_URL'), 'config.get(CLIENT_URL)')
 
 function createServer() {
   const app = express()
