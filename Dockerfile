@@ -2,7 +2,7 @@
 #config folder is in /build/config AND in /config
 #we need config to be in /src/config
 
-FROM node:14
+FROM node:18.12.1
 ADD package.json /tmp/package.json
 ADD package-lock.json /tmp/package-lock.json
 
