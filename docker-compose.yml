@@ -1,7 +1,7 @@
 version: '3.7'
 services:
-  trackfic-backend:
-    container_name: trackfic-backend
+  trackfic-backend.trackficdata.online:
+    container_name: trackfic-backend.trackficdata.online
     restart: unless-stopped
     environment:
       - NODE_ENV=production
@@ -13,8 +13,6 @@ services:
     container_name: caddy
     restart: unless-stopped
     ports:
-      - '80:80'
-      - '443:443'
     volumes:
       - $PWD/Caddyfile:/etc/caddy/Caddyfile
       - $PWD/site:/srv
