@@ -1,7 +1,7 @@
 version: '3.7'
 services:
-  trackficdata:
-    container_name: trackficdata
+  trackfic-backend:
+    container_name: trackfic-backend
     restart: unless-stopped
     environment:
       - NODE_ENV=production
