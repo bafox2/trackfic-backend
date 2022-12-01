@@ -12,7 +12,9 @@ services:
     image: caddy/caddy:2.2.1-alpine
     container_name: caddy
     restart: unless-stopped
-    ports: 2020:2020, 81:81, 422:422
+    ports:
+      - '81:81'
+      - '441:441'
     volumes:
       - $PWD/Caddyfile:/etc/caddy/Caddyfile
       - $PWD/site:/srv
