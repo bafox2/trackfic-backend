@@ -1,5 +1,5 @@
 trackficdata.online {
-  reverse_proxy trackficdata.online {
+  reverse_proxy trackfic-backend.trackficdata.online {
     header_down Strict-Transport-Security max-age=31536000;
   }
 }
