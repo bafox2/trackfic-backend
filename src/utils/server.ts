@@ -9,7 +9,7 @@ function createServer() {
   const app = express()
   app.use(
     cors({
-      origin: config.get('clientUrl'),
+      origin: [config.get('clientUrl'), 'http://localhost:3000'],
       credentials: true,
     })
   )
