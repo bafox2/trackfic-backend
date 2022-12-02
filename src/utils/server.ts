@@ -10,7 +10,7 @@ function createServer() {
   app.use(
     cors({
       //add frontend url and localhost
-      origin: [config.get('clientUrl'), 'http://localhost:3000'],
+      origin: [config.get('clientUrl'), 'https://localhost:3000'],
       credentials: true,
     })
   )
